@@ -7,11 +7,11 @@ import java.util.Objects;
 
 public class DynamicArray<T> implements ToyList<T> {    
     
-    private static final double GROWTH_FACTOR = 2; 
+    protected static final double GROWTH_FACTOR = 2; 
     
-    private Object[] array;
+    protected Object[] array;
     
-    private int size;
+    protected int size;
     
     public DynamicArray() {
         this(32);
@@ -24,8 +24,7 @@ public class DynamicArray<T> implements ToyList<T> {
     @Override
     public void add(T element) {
         ensureCapacity();
-        array[size] = element;
-        size++;
+        array[size++] = element;
     }
     
     @Override
@@ -112,7 +111,7 @@ public class DynamicArray<T> implements ToyList<T> {
 
     private void ensureCapacity() {
         if (array.length == size) {
-            array = Arrays.copyOf(array, (int)(size * GROWTH_FACTOR));
+            array = Arrays.copyOf(array, (int)(array.length * GROWTH_FACTOR));
         }
     }
 

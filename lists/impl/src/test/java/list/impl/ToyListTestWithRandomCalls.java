@@ -16,7 +16,7 @@ public class ToyListTestWithRandomCalls {
                 selfTestingList, randomElementSupplier);
         List<Runnable> operations = listOperations(argless);
         Random rng = new Random();
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 5000; i++) {
             Runnable op = operations.get(rng.nextInt(operations.size()));
             op.run();
         }
