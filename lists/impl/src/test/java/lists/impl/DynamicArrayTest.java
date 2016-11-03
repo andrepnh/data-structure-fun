@@ -1,16 +1,16 @@
-package list.impl;
+package lists.impl;
 
 import java.util.Random;
-import lists.impl.BulkOptimizedDynamicArray;
+import lists.impl.DynamicArray;
 import org.junit.Test;
 
-public class BulkOptimizedDyamicArrayTest {
+public class DynamicArrayTest {
     
     @Test
     public void testAllOperationsRandomly() {
         Random rng = new Random();
         new ToyListTestWithRandomCalls()
-                .test(new BulkOptimizedDynamicArray<Long>(), () -> rng.nextLong());
+                .test(new DynamicArray<Long>(), () -> rng.nextLong());
     }
     
 }

@@ -1,4 +1,4 @@
-package list.impl;
+package lists.impl;
 
 import io.atlassian.fugue.Either;
 import java.util.ArrayList;
