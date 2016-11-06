@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
-import lists.impl.ToyList;
 import static org.junit.Assert.*;
 
 public class SelfTestingToyList<T> implements ToyList<T> {

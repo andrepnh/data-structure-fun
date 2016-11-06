@@ -6,7 +6,6 @@ import java.util.Random;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import lists.impl.ToyList;
 
 public class ToyListTestWithRandomCalls {
 
