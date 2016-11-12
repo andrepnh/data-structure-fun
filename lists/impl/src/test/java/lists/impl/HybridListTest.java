@@ -1,6 +1,7 @@
 package lists.impl;
 
 import java.util.Arrays;
+import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import static org.junit.Assert.*;
@@ -9,6 +10,25 @@ import org.junit.Test;
 public class HybridListTest {
     
     private HybridList<Integer> list;
+    
+    @Test
+    public void testAllOperationsRandomly() {
+        list = new HybridList<>(3);
+        Random rng = new Random();
+        new ToyListTestWithRandomCalls()
+                .test(list, () -> rng.nextInt(1000), 1000);
+    }
+    
+    @Test
+    public void addingToAPositionOfAFullOnlyRowShouldShiftTheLastElementToANewRow() {
+        SelfTestingToyList<Integer> selfTesting 
+                = new SelfTestingToyList<>(new HybridList<>(3));
+        
+        selfTesting.add(451);
+        selfTesting.add(795);
+        selfTesting.add(503);
+        selfTesting.addAt(1, 67);
+    }
     
     @Test
     public void addingOneIndexPastSizeShouldBehaveAsAdd() {

@@ -17,21 +17,21 @@ public class SelfTestingToyList<T> implements ToyList<T> {
     public SelfTestingToyList(ToyList<T> emptyList) {
         underTest = emptyList;
         reference = new ArrayList<>();
-        assertEqualsToReference();
+        assertEqualsToReference("needs an empty list");
     }
 
     @Override
     public void add(T element) {
         underTest.add(element);
         reference.add(element);
-        assertEqualsToReference();
+        assertEqualsToReference("mismatch after add(%s)", element);
     }
 
     @Override
     public void addAll(Collection<T> coll) {
         underTest.addAll(coll);
         reference.addAll(coll);
-        assertEqualsToReference();
+        assertEqualsToReference("mismatch after addAll(%s)", coll);
     }
 
     @Override
@@ -47,14 +47,14 @@ public class SelfTestingToyList<T> implements ToyList<T> {
                 referenceEx,
                 underTestEx);
         
-        assertEqualsToReference();
+        assertEqualsToReference("mismatch after addAt(%d, %s)", index, value);
     }
 
     @Override
     public void clear() {
         underTest.clear();
         reference.clear();
-        assertEqualsToReference();
+        assertEqualsToReference("mismatch on clear()");
     }
 
     @Override
@@ -130,8 +130,8 @@ public class SelfTestingToyList<T> implements ToyList<T> {
         return new ArrayList<>(reference);
     }
 
-    private void assertEqualsToReference() {
-        assertEquals(reference, underTest.asList());
+    private void assertEqualsToReference(String message, Object ... args) {
+        assertEquals(String.format(message, args), reference, underTest.asList());
     }
     
     private Optional<Exception> callAndCatch(Runnable operation) {

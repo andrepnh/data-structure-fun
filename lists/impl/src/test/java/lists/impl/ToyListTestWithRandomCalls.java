@@ -10,12 +10,17 @@ import java.util.stream.Stream;
 public class ToyListTestWithRandomCalls {
 
     public <T> void test(ToyList<T> underTest, Supplier<T> randomElementSupplier) {
+        test(underTest, randomElementSupplier, 5000);
+    }
+    
+    public <T> void test(
+            ToyList<T> underTest, Supplier<T> randomElementSupplier, int operationsQty) {
         SelfTestingToyList<T> selfTestingList = new SelfTestingToyList<>(underTest);
         RandomArgsToyListAdpater<T> argless = new RandomArgsToyListAdpater(
                 selfTestingList, randomElementSupplier);
         List<Runnable> operations = listOperations(argless);
         Random rng = new Random();
-        for (int i = 0; i < 5000; i++) {
+        for (int i = 0; i < operationsQty; i++) {
             Runnable op = operations.get(rng.nextInt(operations.size()));
             op.run();
         }

@@ -68,7 +68,14 @@ public class HybridList<T> implements ToyList<T> {
                 if (row.size() > rowSize) {
                     shifted = row.remove(rowSize);
                     shiftTo = 0;
+                } else {
+                    shifted = null;
                 }
+            }
+            if (shifted != null) {
+                ArrayList<T> row = new ArrayList<>();
+                row.add(shifted);
+                table.add(row);
             }
             size++;
         }
