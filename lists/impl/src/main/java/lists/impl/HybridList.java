@@ -116,10 +116,26 @@ public class HybridList<T> implements ToyList<T> {
     public T removeAt(int index) {
         checkIndex(index);
         int[] position = translateToPosition(index);
-        T removed = table.get(position[0]).remove(position[1]);
-        for (int i = position[0]; i < table.size() - 1; i++) {
-            ArrayList<T> row = table.get(i);
-            row.add(table.get(i + 1).remove(0));
+        
+        T removed = null;
+        for (ListIterator<ArrayList<T>> it = table.listIterator(position[0]);;) {
+            ArrayList<T> row = it.next();
+            // Doing this here saves us from traversing the table more than once
+            if (removed == null) {
+                removed = row.remove(position[1]);
+            }
+            if (!it.hasNext()) {
+                break;
+            } else {
+                ArrayList<T> nextRow = it.next();
+                row.add(nextRow.remove(0));
+                if (!it.hasNext()) { 
+                    break;
+                } else {
+                    // Rewind to fix the hole we left on nextRow
+                    it.previous();
+                }
+            }
         }
         size--;
         if (table.getLast().isEmpty()) {
