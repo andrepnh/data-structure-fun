@@ -4,11 +4,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * A tabular list of linked dynamic arrays. The idea is that it could more
+ * A tabular list of linked dynamic arrays. The idea is that it could hold more
  * elements than an ArrayList, but still perform better then a LinkedList.
  */
 public class HybridList<T> implements ToyList<T> {
@@ -24,6 +25,11 @@ public class HybridList<T> implements ToyList<T> {
 
     public HybridList() {
         this(ROW_SIZE);
+    }
+
+    public HybridList(Collection<T> collection) {
+        this();
+        addAll(collection);
     }
 
     HybridList(int rowSize) {
@@ -53,32 +59,29 @@ public class HybridList<T> implements ToyList<T> {
     public void addAt(int index, T value) {
         if (index < 0 || index > size) {
             throw new IndexOutOfBoundsException(
-                    String.format("!(0 < %d < %d - 1)", index, size));
+                    String.format("!(0 < %d <= %d)", index, size));
         }
 
-        if (index == size) {
-            add(value);
-        } else {
-            int[] position = translateToPosition(index);
-            T shifted = value;
-            int shiftTo = position[1];
-            for (int i = position[0]; i < table.size(); i++) {
-                ArrayList<T> row = table.get(i);
-                row.add(shiftTo, shifted);
-                if (row.size() > rowSize) {
-                    shifted = row.remove(rowSize);
-                    shiftTo = 0;
-                } else {
-                    shifted = null;
-                }
+        int[] position = translateToPosition(index);
+        T shifted = value;
+        int shiftTo = position[1];
+        for (ListIterator<ArrayList<T>> it = table.listIterator(position[0]);
+                it.hasNext();) {
+            ArrayList<T> row = it.next();
+            row.add(shiftTo, shifted);
+            if (row.size() > rowSize) {
+                shifted = row.remove(rowSize);
+                shiftTo = 0;
+            } else {
+                shifted = null;
             }
-            if (shifted != null) {
-                ArrayList<T> row = new ArrayList<>();
-                row.add(shifted);
-                table.add(row);
-            }
-            size++;
         }
+        if (shifted != null) {
+            ArrayList<T> row = new ArrayList<>(ROW_SIZE);
+            row.add(shifted);
+            table.add(row);
+        }
+        size++;
     }
 
     @Override
@@ -105,7 +108,7 @@ public class HybridList<T> implements ToyList<T> {
                 index++;
             }
         }
-        
+
         return -1;
     }
 
@@ -148,7 +151,7 @@ public class HybridList<T> implements ToyList<T> {
     public String toString() {
         return asList().toString();
     }
-    
+
     private void checkIndex(int index) {
         if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException(
