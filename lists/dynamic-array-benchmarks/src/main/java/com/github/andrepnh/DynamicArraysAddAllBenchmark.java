@@ -11,7 +11,7 @@ import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.State;
 
-public class ToyListAddAllBenchmark {
+public class DynamicArraysAddAllBenchmark {
     
     @State(Scope.Thread)
     public static class BigCollection {
