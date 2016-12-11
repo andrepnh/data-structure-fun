@@ -9,8 +9,46 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * A tabular list of linked dynamic arrays. The idea is that it could hold more
- * elements than an ArrayList, but still perform better then a LinkedList.
+ * A tabular list of linked dynamic arrays with fixed lengths. The idea is that 
+ * it could hold more elements than an ArrayList, but still perform better than 
+ * a LinkedList.
+ * 
+ * Benchmarking showed its performance is similar to an ArrayList's, but slower 
+ * - specially for smaller row sizes. Curiously, on my machine appending is 
+ * slightly faster, around 30%, even when the ArrayList has plenty extra 
+ * capacity. That doesn't make much sense, so there could be a glitch on the 
+ * benchmarks.
+ * 
+ * Memory-wise, a couple of tests showed that this toy list can somewhat hold 
+ * more elements before the JVM runs out of heap space.
+ * The first test consisted of using a small heap size (64m) and separately 
+ * adding elements to each list until the heap bursts. For that test, a 
+ * HybridList managed to hold 35% more elements than an ArrayList.
+ * 
+ * The second test simulates something closer to a real world workload. Instead 
+ * of having one huge list with a bunch of numbers, we have multiple lists holding 
+ * some dummy domain objects - around 300k each. We keep creating those lists 
+ * until a pre-determined tipping point where we expect to run out of heap space
+ * soon. After that point, we populate a new benchmark list with 1k dummy objects
+ * and if that works we unreference the new list and let GC do its job. Then we 
+ * repeat this process for 2k objects, then 3k and so on, until we run out of 
+ * memory. That way we should be able to know how much effective heap space we 
+ * managed to use, even with fragmentation.
+ * However, the difference was insignificant: a HybridList was able to hold close
+ * to 1% more elements before failing. Since we shouldn't expect the very same
+ * memory layout between one test and the other, that difference is more than
+ * likely to be due to that.
+ * 
+ * This was a fun exercise, but there isn't much point in taking this data 
+ * structure seriously. It's main selling point turns out to be trading 
+ * performance for some resilience on very specific high memory footprint 
+ * workloads. 
+ * You're much better off tackling that memory issue right away, since GC might 
+ * be all over the place trying to free some space, taking a lot of CPU cycles 
+ * in the process.
+ * 
+ * This implementation is, however, a good starting point for another fragmented
+ * list with arbitrary row size.
  */
 public class HybridList<T> implements ToyList<T> {
 
