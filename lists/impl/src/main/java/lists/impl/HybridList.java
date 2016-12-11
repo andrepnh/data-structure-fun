@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  */
 public class HybridList<T> implements ToyList<T> {
 
-    private static final int ROW_SIZE = 100000;
+    private static final int DEFAULT_ROW_SIZE = 100000;
 
     // Let's use real implementations for benchmarking purposes.
     final LinkedList<ArrayList<T>> table;
@@ -24,7 +24,7 @@ public class HybridList<T> implements ToyList<T> {
     private int size;
 
     public HybridList() {
-        this(ROW_SIZE);
+        this(DEFAULT_ROW_SIZE);
     }
 
     public HybridList(Collection<T> collection) {
@@ -32,7 +32,7 @@ public class HybridList<T> implements ToyList<T> {
         addAll(collection);
     }
 
-    HybridList(int rowSize) {
+    public HybridList(int rowSize) {
         table = new LinkedList<>();
         this.rowSize = rowSize;
         size = 0;
@@ -41,8 +41,11 @@ public class HybridList<T> implements ToyList<T> {
     @Override
     public void add(T element) {
         if (table.isEmpty() || table.getLast().size() == rowSize) {
+            if (!table.isEmpty()) {
+                table.getLast().trimToSize();
+            }
             // We expect a lot of data
-            table.add(new ArrayList<>(ROW_SIZE));
+            table.add(new ArrayList<>(rowSize));
         }
         table.getLast().add(element);
         size++;
@@ -76,8 +79,9 @@ public class HybridList<T> implements ToyList<T> {
                 shifted = null;
             }
         }
-        if (shifted != null) {
-            ArrayList<T> row = new ArrayList<>(ROW_SIZE);
+        boolean danglingElement = shifted != null;
+        if (danglingElement) {
+            ArrayList<T> row = new ArrayList<>(rowSize);
             row.add(shifted);
             table.add(row);
         }
